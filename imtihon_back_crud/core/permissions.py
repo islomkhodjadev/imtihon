@@ -92,9 +92,15 @@ from rest_framework.permissions import BasePermission
 from accounts.models import APIKey
 from django.utils.timezone import now
 
+INTERNAL_HOSTS = {"127.0.0.1", "localhost", "fastapi_ai"}
+
 
 class HasValidAPIKey(BasePermission):
     def has_permission(self, request, view):
+        host = request.get_host().split(":")[0]  # Strip port if present
+        if host in INTERNAL_HOSTS:
+            return True
+
         key = request.headers.get("X-API-KEY")
         if not key:
             return False

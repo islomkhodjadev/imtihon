@@ -22,6 +22,7 @@ def send_evidence(
     header = {
         "X-API-KEY": "52953885efcce046770bc5c576bab385763641cfb9c9ae1b8509111394106998",
     }
+
     file = BytesIO(evidence_file)
     file_name = f"frame_{uuid.uuid4()}.jpg"
     files = {"evidence_file": (file_name, file, "image/jpeg")}

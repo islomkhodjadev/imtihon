@@ -42,7 +42,7 @@
             if (running) return;
             running = true;
             warning.textContent = '';
-            ws = new WebSocket("ws://localhost/imtihon/ai/ws?session_id=2");
+            ws = new WebSocket("wss://imtihon.divspan.uz/imtihon/ai/ws?session_id=2");
 
             ws.binaryType = "blob";  // Accept binary messages as blobs
 
