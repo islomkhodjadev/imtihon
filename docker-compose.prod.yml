@@ -16,7 +16,9 @@ services:
       - static_volume:/app/static
       - media_volume:/app/media
       - ./imtihon_back_crud/:/app/imtihon_back_crud/
-    
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn core.wsgi:application --workers 4 --bind 0.0.0.0:8000"
   fastapi:
     build:
       context: ./imtihon_back_ai
