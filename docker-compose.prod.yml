@@ -5,6 +5,16 @@ networks:
   imtihon_net:
 
 services:
+  postgres:
+      image: postgres:15
+      container_name: postgres
+      restart: always
+      environment:
+        POSTGRES_DB: imtihon_db
+        POSTGRES_USER: imtihon_user
+        POSTGRES_PASSWORD: imtihon_pass
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
   django:
     build:
       context: ./imtihon_back_crud
@@ -13,15 +23,22 @@ services:
       - 8000
     depends_on:
       - fastapi
-    environment:
-      DEBUG: 0
-      HOST: imtihon.divspan.uz
+      - postgres
     networks:
       - imtihon_net
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
       - ./imtihon_back_crud/:/app/imtihon_back_crud/
+    environment:
+      
+      HOST: imtihon.divspan.uz
+      DEBUG: 0
+      DB_NAME: imtihon_db
+      DB_USER: imtihon_user
+      DB_PASSWORD: imtihon_pass
+      DB_HOST: postgres
+      DB_PORT: 5432
     command: >
       sh -c "python manage.py migrate --noinput &&
              gunicorn core.wsgi:application --workers 4 --bind 0.0.0.0:8000"
