@@ -15,7 +15,7 @@ http {
   server {
     
     location /imtihon/crud/ {
-    proxy_pass http://django/;
+    proxy_pass http://django/imtihon/crud/;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -30,7 +30,7 @@ http {
       proxy_set_header Upgrade $http_upgrade;
       proxy_set_header Connection "upgrade";
 
-      proxy_pass http://fastapi/;
+      proxy_pass http://fastapi/imtihon/ai/;
     }
 
     location /static/ {
