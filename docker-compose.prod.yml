@@ -57,7 +57,7 @@ services:
     container_name: nginx_proxy
     ports:
       - "85:80"
-      - "443:443"
+      
 
     environment:
       SERVER_NAME: imtihon.divspan.uz
