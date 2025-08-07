@@ -9,6 +9,8 @@ services:
       image: postgres:15
       container_name: postgres
       restart: always
+      networks:
+        - imtihon_net
       environment:
         POSTGRES_DB: imtihon_db
         POSTGRES_USER: imtihon_user
