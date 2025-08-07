@@ -11,7 +11,8 @@ schema_view = get_schema_view(
     openapi.Info(
         title="Imtihon API",
         default_version="v1",
-        description="Manually tagged endpoints only.",
+        description="Here to use these endpoints use domain + api + the endpoint from swagger docs "
+        "e.g https://imtihon.divspan.uz/imtihon/crud/api/auth/external-login/ for students to login by hemis username and password",
     ),
     public=True,
     url=f"http://{os.environ.get("HOST", "localhost")}",
