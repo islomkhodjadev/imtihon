@@ -1,5 +1,9 @@
 version: '3.9'
 
+
+networks:
+  imtihon_net:
+
 services:
   django:
     build:
@@ -12,6 +16,8 @@ services:
     environment:
       DEBUG: 0
       HOST: imtihon.divspan.uz
+    networks:
+      - imtihon_net
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
@@ -25,6 +31,8 @@ services:
     container_name: fastapi_ai
     expose:
       - 8001
+    networks:
+      - imtihon_net
     # deploy:
     #   resources:
     #     reservations:
@@ -46,6 +54,8 @@ services:
         - redis
       environment:
         - C_FORCE_ROOT=true
+      networks:
+        - imtihon_net
       volumes:
         - ./imtihon_back_ai:/app
 
@@ -54,13 +64,15 @@ services:
     container_name: redis
     expose:
       - 6379
-    
+    networks:
+      - imtihon_net
   nginx:
     image: nginx:alpine
     container_name: nginx_proxy
     ports:
       - "85:80"
-      
+    networks:
+      - imtihon_net
 
     environment:
       SERVER_NAME: imtihon.divspan.uz
