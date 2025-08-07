@@ -15,8 +15,8 @@ services:
     volumes:
       - static_volume:/app/static
       - media_volume:/app/media
-      - ./imtihon_back_crud/db.sqlite3:/app/imtihon_back_crud/db.sqlite3
-    command: 
+      - ./imtihon_back_crud/:/app/imtihon_back_crud/
+    
   fastapi:
     build:
       context: ./imtihon_back_ai
