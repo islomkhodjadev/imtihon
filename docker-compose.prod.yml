@@ -1,0 +1,85 @@
+version: '3.9'
+
+services:
+  django:
+    build:
+      context: ./imtihon_back_crud
+    container_name: django_crud
+    expose:
+      - 8000
+    depends_on:
+      - fastapi
+    environment:
+      DEBUG: 0
+      HOST: imtihon.divspan.uz
+    volumes:
+      - static_volume:/app/static
+      - media_volume:/app/media
+      - ./imtihon_back_crud/db.sqlite3:/app/imtihon_back_crud
+  fastapi:
+    build:
+      context: ./imtihon_back_ai
+    container_name: fastapi_ai
+    expose:
+      - 8001
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    depends_on:
+      - redis
+  celery:
+      build:
+        context: ./imtihon_back_ai
+      container_name: fastapi_celery
+      command: celery -A celery_config.tasks worker --loglevel=info
+      depends_on:
+        - redis
+      environment:
+        - C_FORCE_ROOT=true
+      volumes:
+        - ./imtihon_back_ai:/app
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    expose:
+      - 6379
+    
+  nginx:
+    image: nginx:alpine
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+
+    environment:
+      SERVER_NAME: imtihon.divspan.uz
+      PORT_NGINX: 80  
+
+    volumes:
+      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - ./entrypoint.sh:/entrypoint.sh:ro
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - django
+      - fastapi
+    command: /bin/sh /entrypoint.sh
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    command: certonly --webroot --webroot-path=/var/www/certbot --email nigmatovislom3@gmail.com --agree-tos --no-eff-email -d imtihon.divspan.uz
+    
+volumes:
+  static_volume:
+  media_volume:

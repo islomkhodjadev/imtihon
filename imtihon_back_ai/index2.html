@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Student Cheat Checker</title>
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            background: #f9faff;
+        }
+
+        video,
+        img {
+            width: 420px;
+            border-radius: 10px;
+            margin: 10px;
+        }
+
+        #warning {
+            color: red;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Student Cheat Checker (YOLOv8n, FastAPI, Real-Time)</h2>
+    <video id="video" autoplay muted></video><br>
+    <img id="result" /><br>
+    <span id="warning"></span>
+    <p>
+        <button onclick="start()">Start</button>
+    </p>
+    <script>
+        let ws, video = document.getElementById('video'), result = document.getElementById('result'), warning = document.getElementById('warning');
+        let running = false;
+
+        async function start() {
+            if (running) return;
+            running = true;
+            warning.textContent = '';
+            ws = new WebSocket("ws://localhost/imtihon/ai/ws?session_id=2");
+
+            ws.binaryType = "blob";  // Accept binary messages as blobs
+
+            ws.onmessage = e => {
+                if (e.data instanceof Blob) {
+                    // Received binary Blob (JPEG)
+                    let url = URL.createObjectURL(e.data);
+                    result.src = url;
+
+                    // Optionally revoke old object URLs to avoid memory leaks
+                    // if you want to implement that, store the old URL and revoke here.
+                } else if (typeof e.data === "string" && e.data.startsWith("WARNING:")) {
+                    warning.textContent = e.data.replace("WARNING:", "");
+                } else {
+                    warning.textContent = "";
+                    console.log("Non-image data received:", e.data);
+                }
+            };
+
+
+            ws.onclose = () => {
+                running = false;
+                warning.textContent = "Disconnected!";
+            };
+
+            // Access webcam
+            let stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+            video.srcObject = stream;
+
+            // Send frames at 10 FPS for speed
+            let canvas = document.createElement("canvas");
+            canvas.width = 480; canvas.height = 360;
+            let ctx = canvas.getContext("2d");
+
+
+            async function sendFrame() {
+                if (ws.readyState !== 1) return;
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                // Convert canvas to Blob (JPEG format)
+                canvas.toBlob(blob => {
+                    if (blob) {
+                        ws.send(blob);  // Send raw binary Blob
+                    }
+                }, "image/jpeg", 0.75);
+
+                setTimeout(sendFrame, 60); // 10 FPS
+            }
+
+            sendFrame();
+        }
+
+    </script>
+</body>
+
+</html>
