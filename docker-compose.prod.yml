@@ -97,15 +97,15 @@ services:
       SERVER_NAME: imtihon.divspan.uz
       PORT_NGINX: 80  
 
-  #   volumes:
-  #     - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
-  #     - ./entrypoint.sh:/entrypoint.sh:ro
-  #     - static_volume:/app/static
-  #     - media_volume:/app/media
-  #   depends_on:
-  #     - django
-  #     - fastapi
-  #   command: /bin/sh /entrypoint.sh
+    volumes:
+      - ./nginx.conf.template:/etc/nginx/nginx.conf.template:ro
+      - ./entrypoint.sh:/entrypoint.sh:ro
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      - django
+      - fastapi
+    command: /bin/sh /entrypoint.sh
   # certbot:
   #   image: certbot/certbot
   #   container_name: certbot
