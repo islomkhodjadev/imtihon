@@ -43,7 +43,8 @@ class UniversityUrlsModel(models.Model):
                     return False
 
             filtered_data = [
-                item for item in data
+                item
+                for item in data
                 if is_valid_url(item.get("api_url"))
                 and is_valid_url(item.get("student_url"))
                 and is_valid_url(item.get("employee_url"))
@@ -53,10 +54,17 @@ class UniversityUrlsModel(models.Model):
             errors = []
             for item in filtered_data:
                 try:
-                    university, _ = UniversityModel.objects.get_or_create(name=item["name"])
+                    university, _ = UniversityModel.objects.get_or_create(
+                        name=item["name"]
+                    )
                     obj, created_flag = cls.objects.update_or_create(
                         code=item["code"],
-                        defaults={**item, "university": university}
+                        defaults={
+                            "api_url": item["api_url"],
+                            "student_url": item["student_url"],
+                            "employee_url": item["employee_url"],
+                            "university": university,
+                        },
                     )
                     if created_flag:
                         created += 1
