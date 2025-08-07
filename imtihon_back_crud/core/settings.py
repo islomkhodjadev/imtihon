@@ -28,6 +28,9 @@ DEBUG = bool(os.environ.get("DEBUG", "1"))
 
 ALLOWED_HOSTS = ["imtihon.divspan.uz", "127.0.0.1", "django", "localhost"]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://imtihon.divspan.uz",
+]
 
 # Application definition
 
@@ -50,6 +53,7 @@ INSTALLED_APPS = [
     "accounts",
     "django_cleanup.apps.CleanupConfig",
 ]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
