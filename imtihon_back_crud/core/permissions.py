@@ -92,7 +92,7 @@ from rest_framework.permissions import BasePermission
 from accounts.models import APIKey
 from django.utils.timezone import now
 
-INTERNAL_HOSTS = {"127.0.0.1", "localhost", "fastapi_ai"}
+INTERNAL_HOSTS = {"127.0.0.1", "localhost", "fastapi_ai", "django"}
 
 
 class HasValidAPIKey(BasePermission):
