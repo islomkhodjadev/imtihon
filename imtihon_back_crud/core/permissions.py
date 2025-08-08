@@ -98,6 +98,7 @@ INTERNAL_HOSTS = {"127.0.0.1", "localhost", "fastapi_ai"}
 class HasValidAPIKey(BasePermission):
     def has_permission(self, request, view):
         host = request.get_host().split(":")[0]  # Strip port if present
+
         if host in INTERNAL_HOSTS:
             return True
 
